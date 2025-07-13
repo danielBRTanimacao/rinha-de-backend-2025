@@ -11,5 +11,6 @@ import java.util.UUID;
 public class Payment {
     private UUID correlationId;
     private BigDecimal amount;
+    private TypePayment typePayment;
     // qual processo e horario feito do processo
 }

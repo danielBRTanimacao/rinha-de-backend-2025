@@ -13,8 +13,7 @@ public class PaymentRepository {
     // concertar aqui estudar lib JDBC e inserir valores corretos
     public void save(Payment payment) {
         jdbc.update("""
-                INSERT INTO payments (correlation_id, amount)
-                VALUES (?, ?)
-                """, payment.getCorrelationId(), payment.getAmount());
+                INSERT INTO payments (correlation_id, amount, type_payment) VALUES (?, ?, ?)
+                """, payment.getCorrelationId(), payment.getAmount(), payment.getTypePayment());
     }
 }

@@ -15,6 +15,6 @@ public class PaymentRepository {
         jdbc.update("""
                 INSERT INTO payments (correlation_id, amount)
                 VALUES (?, ?)
-                """,);
+                """, payment.getCorrelationId(), payment.getAmount());
     }
 }

@@ -1,6 +1,13 @@
 version: "3.8"
 
 services:
+  db:
+    image: postgres:17
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=payments
+
   backend-1:
     image: danieltenorio/payment-processor:latest
     container_name: backend-1

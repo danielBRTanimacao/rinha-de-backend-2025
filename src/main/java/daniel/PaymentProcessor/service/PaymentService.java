@@ -4,5 +4,5 @@ import daniel.PaymentProcessor.entities.Payment;
 
 
 public interface PaymentService {
-    void savePayment(Payment payment);
+    void processPayment(Payment payment);
 }

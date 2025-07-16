@@ -23,12 +23,8 @@ public class PaymentControllerImpl implements PaymentController {
         Payment reqPayment = payMapper.toEntity(paymentDTO);
         reqPayment.setTypePayment(TypePayment.DEFAULT);
 
-        paymentService.savePayment(reqPayment);
+        paymentService.processPayment(reqPayment);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
-    @Override
-    public String getPaymentSummary() {
-        return "";
-    }
 }

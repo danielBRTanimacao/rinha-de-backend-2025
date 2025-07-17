@@ -2,6 +2,7 @@ package daniel.PaymentProcessor.component;
 
 import daniel.PaymentProcessor.controller.DTO.ResponseHealthDTO;
 import daniel.PaymentProcessor.entities.TypePayment;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;

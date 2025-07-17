@@ -4,6 +4,7 @@ import daniel.PaymentProcessor.controller.DTO.RequestPaymentDTO;
 import daniel.PaymentProcessor.controller.DTO.RequestTypePaymentDTO;
 import daniel.PaymentProcessor.controller.DTO.ResponseHealthDTO;
 import daniel.PaymentProcessor.entities.TypePayment;
+import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
@@ -13,7 +14,8 @@ import org.springframework.web.client.RestTemplate;
 @Component
 @RequiredArgsConstructor
 public class PaymentProcessHandler {
-    private HealthCache healthCache;
+    private final HealthCache healthCache;
+    // Pesquisar sobre webClient e sobre o bean webCLient e RestTemplate
     private RestTemplate restTemplate;
 
     @Value("${spring.payment.default.url}")

@@ -6,31 +6,36 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.reactive.function.client.WebClient;
 
+import java.time.Duration;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Component
+@RequiredArgsConstructor
 public class HealthCache {
-    private final RestTemplate restTemplate = new RestTemplate();
+    private final WebClient webClient;
     private final Map<String, ResponseHealthDTO> cache = new ConcurrentHashMap<>();
 
     @Value("${spring.payment.default.url}")
-    private static String DEFAULT_URL;
+    private String defaultUrl;
     @Value("${spring.payment.fallback.url}")
-    private static String FALLBACK_URL;
+    private String fallbackUrl;
 
 
-    @Scheduled(fixedRate = 5000)
+    @Scheduled(fixedRateString = "${health.cache.refresh.ms:5000}")
     public void updateHealthCache() {
-        updateServiceHealth(TypePayment.DEFAULT, DEFAULT_URL);
-        updateServiceHealth(TypePayment.FALLBACK, FALLBACK_URL);
+        updateServiceHealth(TypePayment.DEFAULT, defaultUrl);
+        updateServiceHealth(TypePayment.FALLBACK, fallbackUrl);
     }
 
     private void updateServiceHealth(TypePayment processor, String url) {
         try {
-            ResponseHealthDTO healthDto = restTemplate.getForObject(url, ResponseHealthDTO.class);
+            ResponseHealthDTO healthDto = webClient.get()
+                    .uri(url)
+                    .retrieve()
+                    .bodyToMono(ResponseHealthDTO.class).block(Duration.ofMillis(500));
             cache.put(processor.toString(), healthDto);
         } catch (Exception e) {
             cache.put(processor.toString(), new ResponseHealthDTO(true, 1000));

@@ -12,7 +12,6 @@ import java.time.Instant;
 public class PaymentRepository {
     private final JdbcTemplate jdbc;
 
-    // concertar aqui estudar lib JDBC e inserir valores corretos
     public void save(Payment payment) {
         jdbc.update("""
                 INSERT INTO payments (correlation_id, amount, type_payment, related_at) VALUES (?, ?, ?, ?)

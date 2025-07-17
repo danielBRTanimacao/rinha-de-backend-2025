@@ -4,24 +4,25 @@ import daniel.PaymentProcessor.controller.DTO.RequestPaymentDTO;
 import daniel.PaymentProcessor.controller.DTO.RequestTypePaymentDTO;
 import daniel.PaymentProcessor.controller.DTO.ResponseHealthDTO;
 import daniel.PaymentProcessor.entities.TypePayment;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.reactive.function.client.WebClient;
+
+import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
 public class PaymentProcessHandler {
     private final HealthCache healthCache;
-    // Pesquisar sobre webClient e sobre o bean webCLient e RestTemplate
-    private RestTemplate restTemplate;
+    private final WebClient webClient;
 
     @Value("${spring.payment.default.url}")
-    private static String DEFAULT_URL;
+    private String defaultUrl;
     @Value("${spring.payment.fallback.url}")
-    private static String FALLBACK_URL;
+    private String fallbackUrl;
 
     public TypePayment getTypePayment() {
         ResponseHealthDTO defaultHealth = healthCache.getHealth(TypePayment.DEFAULT);
@@ -29,17 +30,29 @@ public class PaymentProcessHandler {
 
         if (!defaultHealth.failing()) return TypePayment.DEFAULT;
         if (!fallbackHealth.failing()) return TypePayment.FALLBACK;
-        throw new RuntimeException("Process downs"); // lançar erro e mudar a logica!
+        throw new RuntimeException("Process downs");
     }
 
     public boolean callProcess(RequestTypePaymentDTO reqDto) {
-        String url = reqDto.typePayment().equals(TypePayment.DEFAULT) ? DEFAULT_URL : FALLBACK_URL;
+        String url = reqDto.typePayment().equals(TypePayment.DEFAULT) ? defaultUrl : fallbackUrl;
 
         try {
             RequestPaymentDTO rePayment = new RequestPaymentDTO(reqDto.correlationId(), reqDto.amount());
-            ResponseEntity<String> res = restTemplate.postForEntity(url, rePayment, String.class);
-            return res.getStatusCode().is2xxSuccessful();
+            return Optional.ofNullable(
+                    webClient.post()
+                            .uri(url)
+                            .bodyValue(rePayment)
+                            .retrieve()
+                            .toEntity(String.class)
+                            .block()
+            ).map(ResponseEntity::getStatusCode)
+                    .map(statuscode -> HttpStatus.valueOf(statuscode.value()))
+                    .map(HttpStatus::is2xxSuccessful)
+                    .orElse(false);
+            // usando referencia de metodo
+
         } catch (Exception e) {
+            //  Possivel uso de log  para determinar  o erro especifico
             return false;
         }
 

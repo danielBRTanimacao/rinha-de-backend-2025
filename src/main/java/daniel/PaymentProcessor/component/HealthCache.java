@@ -18,16 +18,16 @@ public class HealthCache {
     private final WebClient webClient;
     private final Map<String, ResponseHealthDTO> cache = new ConcurrentHashMap<>();
 
-    @Value("${spring.payment.default.url}")
-    private String defaultUrl;
-    @Value("${spring.payment.fallback.url}")
-    private String fallbackUrl;
+    @Value("${spring.payment.default.health.url}")
+    private String defaultHealthUrl;
+    @Value("${spring.payment.fallback.health.url}")
+    private String fallbackHealthUrl;
 
 
     @Scheduled(fixedRateString = "${health.cache.refresh.ms:5000}")
     public void updateHealthCache() {
-        updateServiceHealth(TypePayment.DEFAULT, defaultUrl);
-        updateServiceHealth(TypePayment.FALLBACK, fallbackUrl);
+        updateServiceHealth(TypePayment.DEFAULT, defaultHealthUrl);
+        updateServiceHealth(TypePayment.FALLBACK, fallbackHealthUrl);
     }
 
     private void updateServiceHealth(TypePayment processor, String url) {

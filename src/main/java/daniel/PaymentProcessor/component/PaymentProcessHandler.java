@@ -1,6 +1,6 @@
 package daniel.PaymentProcessor.component;
 
-import daniel.PaymentProcessor.controller.DTO.RequestPaymentDTO;
+import daniel.PaymentProcessor.controller.DTO.requestsPaymentsDTOs.RequestPrincipalPaymentDTO;
 import daniel.PaymentProcessor.controller.DTO.RequestTypePaymentDTO;
 import daniel.PaymentProcessor.controller.DTO.ResponseHealthDTO;
 import daniel.PaymentProcessor.entities.TypePayment;
@@ -37,7 +37,7 @@ public class PaymentProcessHandler {
         String url = reqDto.typePayment().equals(TypePayment.DEFAULT) ? defaultUrl : fallbackUrl;
 
         try {
-            RequestPaymentDTO rePayment = new RequestPaymentDTO(reqDto.correlationId(), reqDto.amount());
+            RequestPrincipalPaymentDTO rePayment = new RequestPrincipalPaymentDTO(reqDto.correlationId(), reqDto.amount());
             return Optional.ofNullable(
                     webClient.post()
                             .uri(url)

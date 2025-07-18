@@ -9,8 +9,7 @@ services:
       - "5432:5432"
 
 #  backend-1:
-#    #  image: danieltenorio/payment-processor:latest
-#    build: .
+#    image: danielbatata/java-payment-processor:0.0.1
 #    container_name: backend-1
 #    networks:
 #      - backend
@@ -27,8 +26,7 @@ services:
 #          memory: "175MB"
 #
 #  backend-2:
-#    #  image: danieltenorio/payment-processor:latest
-#    build: .
+#    image: danielbatata/java-payment-processor:0.0.1
 #    container_name: backend-2
 #    networks:
 #      - backend

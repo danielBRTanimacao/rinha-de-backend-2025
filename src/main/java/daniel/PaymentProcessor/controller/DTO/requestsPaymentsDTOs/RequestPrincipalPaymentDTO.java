@@ -1,4 +1,4 @@
-package daniel.PaymentProcessor.controller.DTO;
+package daniel.PaymentProcessor.controller.DTO.requestsPaymentsDTOs;
 
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Digits;
@@ -6,7 +6,7 @@ import jakarta.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.UUID;
 
-public record RequestPaymentDTO(
+public record RequestPrincipalPaymentDTO(
         @NotNull
         UUID correlationId,
 

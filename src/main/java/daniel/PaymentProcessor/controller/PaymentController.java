@@ -1,6 +1,6 @@
 package daniel.PaymentProcessor.controller;
 
-import daniel.PaymentProcessor.controller.DTO.RequestPaymentDTO;
+import daniel.PaymentProcessor.controller.DTO.requestsPaymentsDTOs.*;
 import daniel.PaymentProcessor.controller.DTO.ResponseSummaryDTO;
 import jakarta.validation.Valid;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -14,7 +14,10 @@ import java.time.Instant;
 
 public interface PaymentController {
     @PostMapping("/payments")
-    ResponseEntity<Void> createPayment(@Valid @RequestBody RequestPaymentDTO paymentDTO);
+    ResponseEntity<Void> createPayment(@Valid @RequestBody RequestPrincipalPaymentDTO paymentDTO);
+
+    @PostMapping("/payments")
+    ResponseEntity<Void> computePayment(@Valid @RequestBody RequestedPaymentsDTO paymentDTO);
 
     @GetMapping("/payments-summary")
     ResponseSummaryDTO getSummary(

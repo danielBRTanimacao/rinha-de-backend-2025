@@ -1,8 +1,9 @@
 package daniel.PaymentProcessor.controller.impl;
 
 import daniel.PaymentProcessor.controller.DTO.ResponseSummaryDTO;
+import daniel.PaymentProcessor.controller.DTO.requestsPaymentsDTOs.RequestedPaymentsDTO;
 import daniel.PaymentProcessor.controller.PaymentController;
-import daniel.PaymentProcessor.controller.DTO.RequestPaymentDTO;
+import daniel.PaymentProcessor.controller.DTO.requestsPaymentsDTOs.*;
 import daniel.PaymentProcessor.entities.Payment;
 import daniel.PaymentProcessor.entities.TypePayment;
 import daniel.PaymentProcessor.mapper.PaymentMapper;
@@ -22,12 +23,17 @@ public class PaymentControllerImpl implements PaymentController {
     private final PaymentMapper payMapper;
 
     @Override
-    public ResponseEntity<Void> createPayment(RequestPaymentDTO paymentDTO) {
+    public ResponseEntity<Void> createPayment(RequestPrincipalPaymentDTO paymentDTO) {
         Payment reqPayment = payMapper.toEntity(paymentDTO);
         reqPayment.setTypePayment(TypePayment.DEFAULT);
 
         paymentService.processPayment(reqPayment);
         return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+    @Override
+    public ResponseEntity<Void> computePayment(RequestedPaymentsDTO paymentDTO) {
+        return null;
     }
 
     @Override

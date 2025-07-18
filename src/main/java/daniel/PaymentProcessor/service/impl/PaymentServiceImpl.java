@@ -4,7 +4,6 @@ import daniel.PaymentProcessor.component.PaymentProcessHandler;
 import daniel.PaymentProcessor.controller.DTO.RequestTypePaymentDTO;
 import daniel.PaymentProcessor.controller.DTO.ResponseSummaryDTO;
 import daniel.PaymentProcessor.entities.Payment;
-import daniel.PaymentProcessor.entities.TypePayment;
 import daniel.PaymentProcessor.repository.PaymentRepository;
 import daniel.PaymentProcessor.service.PaymentService;
 import lombok.RequiredArgsConstructor;
@@ -22,11 +21,11 @@ public class PaymentServiceImpl implements PaymentService {
     @Override
     public void processPayment(Payment payment) {
         boolean success = payProcHandler.callProcess(
-                new RequestTypePaymentDTO(
-                        payProcHandler.getTypePayment(),
-                        payment.getCorrelationId(),
-                        payment.getAmount()
-                )
+            new RequestTypePaymentDTO(
+                payProcHandler.getTypePayment(),
+                payment.getCorrelationId(),
+                payment.getAmount()
+            )
         );
 
         if (success) {
@@ -38,7 +37,10 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     public ResponseSummaryDTO getSummary(Instant from, Instant to) {
-        return;
+        return new ResponseSummaryDTO(
+            paymentRepository.getProcessorSummary("default", from, to),
+            paymentRepository.getProcessorSummary("fallback", from, to)
+        );
     }
 
 }

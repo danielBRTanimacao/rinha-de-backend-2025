@@ -1,13 +1,16 @@
 services:
   db:
-    image: postgres:17
+    image: postgres:15
     environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=password
-      - POSTGRES_DB=payments
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: payments
+    ports:
+      - "5432:5432"
 
 #  backend-1:
-#    image: danieltenorio/payment-processor:latest
+#    #  image: danieltenorio/payment-processor:latest
+#    build: .
 #    container_name: backend-1
 #    networks:
 #      - backend
@@ -24,7 +27,8 @@ services:
 #          memory: "175MB"
 #
 #  backend-2:
-#    image: danieltenorio/payment-processor:latest
+#    #  image: danieltenorio/payment-processor:latest
+#    build: .
 #    container_name: backend-2
 #    networks:
 #      - backend

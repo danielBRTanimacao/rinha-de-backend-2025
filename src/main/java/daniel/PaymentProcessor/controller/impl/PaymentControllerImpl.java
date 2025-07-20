@@ -1,7 +1,6 @@
 package daniel.PaymentProcessor.controller.impl;
 
 import daniel.PaymentProcessor.controller.DTO.ResponseSummaryDTO;
-import daniel.PaymentProcessor.controller.DTO.requestsPaymentsDTOs.RequestedPaymentsDTO;
 import daniel.PaymentProcessor.controller.PaymentController;
 import daniel.PaymentProcessor.controller.DTO.requestsPaymentsDTOs.*;
 import daniel.PaymentProcessor.entities.Payment;
@@ -29,11 +28,6 @@ public class PaymentControllerImpl implements PaymentController {
 
         paymentService.processPayment(reqPayment);
         return ResponseEntity.status(HttpStatus.CREATED).build();
-    }
-
-    @Override
-    public ResponseEntity<Void> computePayment(RequestedPaymentsDTO paymentDTO) {
-        return null;
     }
 
     @Override

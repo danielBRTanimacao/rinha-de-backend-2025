@@ -16,12 +16,9 @@ public interface PaymentController {
     @PostMapping("/payments")
     ResponseEntity<Void> createPayment(@Valid @RequestBody RequestPrincipalPaymentDTO paymentDTO);
 
-    @PostMapping("/payments")
-    ResponseEntity<Void> computePayment(@Valid @RequestBody RequestedPaymentsDTO paymentDTO);
-
     @GetMapping("/payments-summary")
     ResponseSummaryDTO getSummary(
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant from,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant to
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant from,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant to
     );
 }

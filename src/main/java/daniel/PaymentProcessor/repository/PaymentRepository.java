@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
+import java.sql.Timestamp;
 import java.time.Instant;
 
 @Repository
@@ -34,11 +35,18 @@ public class PaymentRepository {
             AND requested_at BETWEEN ? AND ?
             """;
 
+        if (from == null) {
+            from = Instant.EPOCH;
+        }
+        if (to == null) {
+            to = Instant.now();
+        }
+
         return jdbc.queryForObject(sql, (rs, rowNum) -> {
             ResponseSummaryDTO.ProcessorSummary summary = new ResponseSummaryDTO.ProcessorSummary();
             summary.setTotalRequests(rs.getLong("total_requests"));
             summary.setTotalAmount(rs.getBigDecimal("total_amount"));
             return summary;
-        }, processor, from, to);
+        }, processor, Timestamp.from(from), Timestamp.from(to));
     }
 }

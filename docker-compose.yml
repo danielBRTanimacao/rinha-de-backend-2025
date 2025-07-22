@@ -1,47 +1,50 @@
 services:
   db:
-    image: postgres:17
+    image: postgres:15
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: password
-      POSTGRES_DB: payment
+      POSTGRES_DB: payments
     ports:
       - "5432:5432"
 
-  backend-1:
-    image: danielbatata/java-payment:0.0.1
-    container_name: backend-1
-    networks:
-      - backend
-      - payment-processor
-    environment:
-      - PAYMENT_PROCESSOR_URL_DEFAULT=http://payment-processor-default:8080
-      - PAYMENT_PROCESSOR_URL_FALLBACK=http://payment-processor-fallback:8080
-    ports:
-      - "9999:8080"
-    deploy:
-      resources:
-        limits:
-          cpus: "0.75"
-          memory: "175MB"
-
-  backend-2:
-    image: danielbatata/java-payment:0.0.1
-    container_name: backend-2
-    networks:
-      - backend
-      - payment-processor
-    environment:
-      - PAYMENT_PROCESSOR_URL_DEFAULT=http://payment-processor-default:8080
-      - PAYMENT_PROCESSOR_URL_FALLBACK=http://payment-processor-fallback:8080
-    deploy:
-      resources:
-        limits:
-          cpus: "0.75"
-          memory: "175MB"
-
-networks:
-  backend:
-    driver: bridge
-  payment-processor:
-    external: true
+#  backend-1:
+#    image: danielbatata/java-payment:0.0.1
+#    container_name: backend-1
+#    networks:
+#      - backend
+#      - payment-processor
+#    environment:
+#      - PAYMENT_PROCESSOR_URL_DEFAULT=http://payment-processor-default:8080
+#      - PAYMENT_PROCESSOR_URL_FALLBACK=http://payment-processor-fallback:8080
+#    ports:
+#      - "9999:8080"
+#    deploy:
+#      resources:
+#        limits:
+#          cpus: "0.75"
+#          memory: "175MB"
+#
+#  backend-2:
+#    image: danielbatata/java-payment:0.0.1
+#    container_name: backend-2
+#    networks:
+#      - backend
+#      - payment-processor
+#    environment:
+#      - PAYMENT_PROCESSOR_URL_DEFAULT=http://payment-processor-default:8080
+#      - PAYMENT_PROCESSOR_URL_FALLBACK=http://payment-processor-fallback:8080
+#    deploy:
+#      resources:
+#        limits:
+#          cpus: "0.49"
+#          memory: "105MB"
+#
+#  load-balancer:
+#    # Organizar load balancer
+#
+#networks:
+#  backend:
+#    driver: bridge
+#  payment-processor:
+#    external: true

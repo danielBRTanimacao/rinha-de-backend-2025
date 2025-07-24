@@ -16,9 +16,10 @@ public class PaymentRepository {
 
     public void save(Payment payment) {
         jdbc.update("""
-                INSERT INTO payments (correlation_id, amount, type_payment, requested_at) VALUES (?, ?, ?, ?)
+        INSERT INTO payments (correlation_id, amount, type_payment, requested_at)
+        VALUES (?, ?, ?, ?)
+        """, payment.getCorrelationId(), payment.getAmount(), payment.getTypePayment().name(), Instant.now());
 
-                """, payment.getCorrelationId(), payment.getAmount(), payment.getTypePayment(), Instant.now());
     }
 
     public ResponseSummaryDTO.ProcessorSummary getProcessorSummary(

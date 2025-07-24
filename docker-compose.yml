@@ -1,50 +1,53 @@
 services:
   db:
     image: postgres:15
+    container_name: postgres-db
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: password
       POSTGRES_DB: payments
     ports:
       - "5432:5432"
+    networks:
+      - backend
 
-#  backend-1:
-#    image: danielbatata/java-payment:0.0.1
-#    container_name: backend-1
-#    networks:
-#      - backend
-#      - payment-processor
-#    environment:
-#      - PAYMENT_PROCESSOR_URL_DEFAULT=http://payment-processor-default:8080
-#      - PAYMENT_PROCESSOR_URL_FALLBACK=http://payment-processor-fallback:8080
-#    ports:
-#      - "9999:8080"
-#    deploy:
-#      resources:
-#        limits:
-#          cpus: "0.75"
-#          memory: "175MB"
-#
-#  backend-2:
-#    image: danielbatata/java-payment:0.0.1
-#    container_name: backend-2
-#    networks:
-#      - backend
-#      - payment-processor
-#    environment:
-#      - PAYMENT_PROCESSOR_URL_DEFAULT=http://payment-processor-default:8080
-#      - PAYMENT_PROCESSOR_URL_FALLBACK=http://payment-processor-fallback:8080
-#    deploy:
-#      resources:
-#        limits:
-#          cpus: "0.49"
-#          memory: "105MB"
-#
-#  load-balancer:
-#    # Organizar load balancer
-#
-#networks:
-#  backend:
-#    driver: bridge
-#  payment-processor:
-#    external: true
+  payment-processor-default:
+    image: danielbatata/java-payment:0.0.2
+    container_name: backend-1
+    depends_on:
+      - db
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/payments
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=password
+    networks:
+      - backend
+
+  payment-processor-fallback:
+    image: danielbatata/java-payment:0.0.2
+    container_name: backend-2
+    depends_on:
+      - db
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/payments
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=password
+    networks:
+      - backend
+
+  nginx-load-balancer:
+    image: nginx:alpine
+    container_name: nginx-load-balancer
+    ports:
+      - "8080:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+    depends_on:
+      - payment-processor-default
+      - payment-processor-fallback
+    networks:
+      - backend
+
+networks:
+  backend:
+    driver: bridge

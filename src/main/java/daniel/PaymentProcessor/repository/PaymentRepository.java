@@ -19,7 +19,6 @@ public class PaymentRepository {
         INSERT INTO payments (correlation_id, amount, type_payment, requested_at)
         VALUES (?, ?, ?, ?)
         """, payment.getCorrelationId(), payment.getAmount(), payment.getTypePayment().name(), Instant.now());
-
     }
 
     public ResponseSummaryDTO.ProcessorSummary getProcessorSummary(

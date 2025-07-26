@@ -1,9 +1,8 @@
 package daniel.PaymentProcessor.controller;
 
-import daniel.PaymentProcessor.controller.DTO.requestsPaymentsDTOs.*;
+import daniel.PaymentProcessor.controller.DTO.RequestedPaymentsDTO;
 import daniel.PaymentProcessor.controller.DTO.ResponseSummaryDTO;
 import daniel.PaymentProcessor.entities.Payment;
-import daniel.PaymentProcessor.entities.TypePayment;
 import daniel.PaymentProcessor.mapper.PaymentMapper;
 import daniel.PaymentProcessor.service.PaymentService;
 import jakarta.validation.Valid;
@@ -18,15 +17,16 @@ import java.time.Instant;
 @RestController
 @RequiredArgsConstructor
 public class PaymentController {
+
     private final PaymentService paymentService;
     private final PaymentMapper payMapper;
 
     @PostMapping("/payments")
-    public ResponseEntity<Void> createPayment(@Valid @RequestBody RequestPrincipalPaymentDTO paymentDTO) {
-        Payment reqPayment = payMapper.toEntity(paymentDTO);
-        reqPayment.setTypePayment(TypePayment.DEFAULT);
+    public ResponseEntity<Void> createPayment(@Valid @RequestBody RequestedPaymentsDTO paymentDTO) {
+        Payment payment = payMapper.toEntity(paymentDTO);
 
-        paymentService.processPayment(reqPayment);
+        paymentService.processPayment(payment);
+
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
@@ -37,5 +37,4 @@ public class PaymentController {
     ) {
         return paymentService.getSummary(from, to);
     }
-
 }

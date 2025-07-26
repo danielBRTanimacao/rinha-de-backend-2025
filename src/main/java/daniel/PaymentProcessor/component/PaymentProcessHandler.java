@@ -1,8 +1,8 @@
 package daniel.PaymentProcessor.component;
 
-import daniel.PaymentProcessor.controller.DTO.requestsPaymentsDTOs.RequestPrincipalPaymentDTO;
 import daniel.PaymentProcessor.controller.DTO.RequestTypePaymentDTO;
 import daniel.PaymentProcessor.controller.DTO.ResponseHealthDTO;
+import daniel.PaymentProcessor.controller.DTO.RequestedPaymentsDTO;
 import daniel.PaymentProcessor.entities.TypePayment;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import java.time.Instant;
 import java.util.Optional;
 
 @Component
@@ -37,7 +38,11 @@ public class PaymentProcessHandler {
         String url = reqDto.typePayment().equals(TypePayment.DEFAULT) ? defaultUrl : fallbackUrl;
 
         try {
-            RequestPrincipalPaymentDTO rePayment = new RequestPrincipalPaymentDTO(reqDto.correlationId(), reqDto.amount());
+            RequestedPaymentsDTO rePayment = new RequestedPaymentsDTO(
+                    reqDto.correlationId(),
+                    reqDto.amount(),
+                    Instant.now()
+            );
             return Optional.ofNullable(
                     webClient.post()
                             .uri(url)

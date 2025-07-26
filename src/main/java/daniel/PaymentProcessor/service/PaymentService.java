@@ -18,14 +18,14 @@ public class PaymentService {
 
     public void processPayment(Payment payment) {
         boolean success = payProcHandler.callProcess(
-                new RequestTypePaymentDTO(
-                        payProcHandler.getTypePayment(),
-                        payment.getCorrelationId(),
-                        payment.getAmount()
-                )
+                type,
+                payment.getCorrelationId(),
+                payment.getAmount(),
+                Instant.now()
         );
 
         if (success) {
+            payment.setTypePayment(payProcHandler.getTypePayment());
             paymentRepository.save(payment);
         } else {
             System.out.println("Passar para o fallback ou default");

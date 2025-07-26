@@ -12,7 +12,8 @@ services:
       - backend
 
   payment-processor-default:
-    image: danielbatata/java-payment:0.0.3
+    build: .
+    # image: danielbatata/java-payment:0.0.3
     container_name: backend-1
     depends_on:
       - db
@@ -24,7 +25,8 @@ services:
       - backend
 
   payment-processor-fallback:
-    image: danielbatata/java-payment:0.0.3
+    build: .
+    #image: danielbatata/java-payment:0.0.3
     container_name: backend-2
     depends_on:
       - db

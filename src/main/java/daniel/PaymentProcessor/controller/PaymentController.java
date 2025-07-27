@@ -3,6 +3,7 @@ package daniel.PaymentProcessor.controller;
 import daniel.PaymentProcessor.component.PaymentProcessHandler;
 import daniel.PaymentProcessor.controller.DTO.*;
 import daniel.PaymentProcessor.entities.Payment;
+import daniel.PaymentProcessor.entities.TypePayment;
 import daniel.PaymentProcessor.mapper.PaymentMapper;
 import daniel.PaymentProcessor.repository.PaymentRepository;
 import jakarta.validation.Valid;
@@ -19,7 +20,6 @@ import java.time.Instant;
 public class PaymentController {
 
     private final PaymentMapper payMapper;
-
     private final PaymentRepository paymentRepository;
     private final PaymentProcessHandler payProcHandler;
 
@@ -27,19 +27,14 @@ public class PaymentController {
     public ResponseEntity<Void> createPayment(@Valid @RequestBody RequestedPaymentsDTO paymentDTO) {
         Payment payment = payMapper.toEntity(paymentDTO);
 
-        RequestTypePaymentDTO dto = new RequestTypePaymentDTO(
-                payment.getTypePayment(),
-                payment.getCorrelationId(),
-                payment.getAmount()
-        );
-
-        boolean success = payProcHandler.callProcess(dto);
+        boolean success = payProcHandler.callProcess(payment);
 
         if (success) {
-            payment.setTypePayment(payProcHandler.getTypePayment());
+            payment.setTypePayment(payProcHandler.getLastUsedProcessor());
             paymentRepository.save(payment);
         } else {
-            System.out.println("Passar para o fallback ou default");
+            System.out.println("Ambos os processadores estão indisponíveis");
+            return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).build();
         }
 
         return ResponseEntity.status(HttpStatus.CREATED).build();

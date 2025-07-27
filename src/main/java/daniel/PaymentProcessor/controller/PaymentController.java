@@ -1,10 +1,10 @@
 package daniel.PaymentProcessor.controller;
 
-import daniel.PaymentProcessor.controller.DTO.RequestedPaymentsDTO;
-import daniel.PaymentProcessor.controller.DTO.ResponseSummaryDTO;
+import daniel.PaymentProcessor.component.PaymentProcessHandler;
+import daniel.PaymentProcessor.controller.DTO.*;
 import daniel.PaymentProcessor.entities.Payment;
 import daniel.PaymentProcessor.mapper.PaymentMapper;
-import daniel.PaymentProcessor.service.PaymentService;
+import daniel.PaymentProcessor.repository.PaymentRepository;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -18,14 +18,29 @@ import java.time.Instant;
 @RequiredArgsConstructor
 public class PaymentController {
 
-    private final PaymentService paymentService;
     private final PaymentMapper payMapper;
+
+    private final PaymentRepository paymentRepository;
+    private final PaymentProcessHandler payProcHandler;
 
     @PostMapping("/payments")
     public ResponseEntity<Void> createPayment(@Valid @RequestBody RequestedPaymentsDTO paymentDTO) {
         Payment payment = payMapper.toEntity(paymentDTO);
 
-        paymentService.processPayment(payment);
+        RequestTypePaymentDTO dto = new RequestTypePaymentDTO(
+                payment.getTypePayment(),
+                payment.getCorrelationId(),
+                payment.getAmount()
+        );
+
+        boolean success = payProcHandler.callProcess(dto);
+
+        if (success) {
+            payment.setTypePayment(payProcHandler.getTypePayment());
+            paymentRepository.save(payment);
+        } else {
+            System.out.println("Passar para o fallback ou default");
+        }
 
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
@@ -35,6 +50,10 @@ public class PaymentController {
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant from,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant to
     ) {
-        return paymentService.getSummary(from, to);
+
+        return new ResponseSummaryDTO(
+                paymentRepository.getProcessorSummary("default", from, to),
+                paymentRepository.getProcessorSummary("fallback", from, to)
+        );
     }
 }

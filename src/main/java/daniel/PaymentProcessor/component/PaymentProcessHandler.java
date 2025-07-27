@@ -54,10 +54,8 @@ public class PaymentProcessHandler {
                     .map(statuscode -> HttpStatus.valueOf(statuscode.value()))
                     .map(HttpStatus::is2xxSuccessful)
                     .orElse(false);
-            // usando referencia de metodo
 
         } catch (Exception e) {
-            //  Possivel uso de log  para determinar  o erro especifico
             return false;
         }
 

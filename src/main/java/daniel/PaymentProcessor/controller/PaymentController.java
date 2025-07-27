@@ -3,7 +3,6 @@ package daniel.PaymentProcessor.controller;
 import daniel.PaymentProcessor.component.PaymentProcessHandler;
 import daniel.PaymentProcessor.controller.DTO.*;
 import daniel.PaymentProcessor.entities.Payment;
-import daniel.PaymentProcessor.entities.TypePayment;
 import daniel.PaymentProcessor.mapper.PaymentMapper;
 import daniel.PaymentProcessor.repository.PaymentRepository;
 import jakarta.validation.Valid;

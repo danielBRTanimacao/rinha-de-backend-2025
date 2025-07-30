@@ -17,7 +17,6 @@ public record RequestedPaymentsDTO(
         @Digits(integer = 12, fraction = 2, message = "Amount must have up to 12 digits and 2 decimal places")
         BigDecimal amount,
 
-        @NotNull
         Instant requestedAt
 ) {
 }

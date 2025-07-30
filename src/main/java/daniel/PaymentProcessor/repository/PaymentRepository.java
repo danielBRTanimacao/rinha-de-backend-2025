@@ -42,10 +42,10 @@ public class PaymentRepository {
             to = Instant.now();
         }
 
-        return jdbc.queryForObject(sql, (rs, rowNum) -> {
+        return jdbc.queryForObject(sql, (resultSet, rowNum) -> {
             ResponseSummaryDTO.ProcessorSummary summary = new ResponseSummaryDTO.ProcessorSummary();
-            summary.setTotalRequests(rs.getLong("total_requests"));
-            summary.setTotalAmount(rs.getBigDecimal("total_amount"));
+            summary.setTotalRequests(resultSet.getLong("total_requests"));
+            summary.setTotalAmount(resultSet.getBigDecimal("total_amount"));
             return summary;
         }, processor, Timestamp.from(from), Timestamp.from(to));
     }

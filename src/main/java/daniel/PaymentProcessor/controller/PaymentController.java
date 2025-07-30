@@ -4,7 +4,7 @@ import daniel.PaymentProcessor.component.PaymentProcessHandler;
 import daniel.PaymentProcessor.controller.DTO.*;
 import daniel.PaymentProcessor.entities.Payment;
 import daniel.PaymentProcessor.mapper.PaymentMapper;
-import daniel.PaymentProcessor.repository.PaymentRepository;
+import daniel.PaymentProcessor.repository.*;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -24,19 +24,19 @@ public class PaymentController {
 
     @PostMapping("/payments")
     public ResponseEntity<Void> createPayment(@Valid @RequestBody RequestedPaymentsDTO paymentDTO) {
-        Payment payment = payMapper.toEntity(paymentDTO);
 
-        boolean success = payProcHandler.callProcess(payment);
+        Payment reqPayment = payMapper.toEntity(paymentDTO);
+        if (reqPayment.getRequestedAt() == null) reqPayment.setRequestedAt(Instant.now());
+
+        boolean success = payProcHandler.callProcess(reqPayment);
 
         if (success) {
-            payment.setTypePayment(payProcHandler.getLastUsedProcessor());
-            paymentRepository.save(payment);
-        } else {
-            System.out.println("Ambos os processadores estão indisponíveis");
-            return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).build();
+            reqPayment.setTypePayment(payProcHandler.getLastUsedProcessor());
+            paymentRepository.save(reqPayment);
+            return ResponseEntity.status(HttpStatus.CREATED).build();
         }
 
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+        return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).build();
     }
 
     @GetMapping("/payments-summary")
@@ -44,7 +44,6 @@ public class PaymentController {
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant from,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant to
     ) {
-
         return new ResponseSummaryDTO(
                 paymentRepository.getProcessorSummary("default", from, to),
                 paymentRepository.getProcessorSummary("fallback", from, to)
